@@ -64,7 +64,7 @@ class TvShowCard extends StatelessWidget {
                         width: 8,
                       ),
                       Text(
-                        tvShow.rating.toString(),
+                        tvShow.rating?.toString() ?? '--',
                         style: _textStyle,
                       ),
                     ],

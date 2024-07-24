@@ -21,7 +21,7 @@ class TvmazeRepository extends ApiRepository {
           id: item['show']['id'],
           name: item['show']['name'],
           imageUrl: item['show']['image']['medium'],
-          rating: item['show']['rating']['average'] ?? 0.0,
+          rating: item['show']['rating']['average'],
         ));
       }
       return tvShows;
