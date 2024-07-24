@@ -1,46 +1,79 @@
+import 'dart:ui' as ui;
+
 import 'package:ballastlane_app/domain/entities/tv_show.dart';
 import 'package:flutter/material.dart';
 
 class TvShowCard extends StatelessWidget {
   final TvShow tvShow;
-  const TvShowCard({super.key, required this.tvShow});
+  final VoidCallback? onTap;
+  const TvShowCard({super.key, required this.tvShow, this.onTap});
+
+  final TextStyle _textStyle = const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  );
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.all(Radius.circular(12)),
-        border: Border.all(
-          color: Colors.black12,
-          width: 1,
-        ),
-      ),
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                Image.network(tvShow.imageUrl),
-                Positioned(
+    return GestureDetector(
+      onTap: onTap,
+      child: AspectRatio(
+        aspectRatio: 1.0,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              Positioned.fill(
+                child: ImageFiltered(
+                  imageFilter: ui.ImageFilter.blur(
+                    sigmaX: 5.0,
+                    sigmaY: 5.0,
+                    tileMode: TileMode.decal,
+                  ),
+                  child: Image.network(
+                    tvShow.imageUrl,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: Image.network(
+                  tvShow.imageUrl,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              Positioned(
+                child: Container(
+                  color: Theme.of(context).primaryColor.withOpacity(0.7),
                   child: Row(
                     children: [
                       Expanded(
-                        child: Text(tvShow.name),
+                        child: Text(
+                          tvShow.name,
+                          style: _textStyle,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      Text(tvShow.rating.toString()),
+                      const Icon(
+                        Icons.star,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        tvShow.rating.toString(),
+                        style: _textStyle,
+                      ),
                     ],
                   ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:ballastlane_app/domain/entities/tv_show.dart';
 import 'package:ballastlane_app/implementation/repositories/tvmaze_repository.dart';
+import 'package:ballastlane_app/ui/screens/detail_screen.dart';
 import 'package:ballastlane_app/ui/widgets/tvshow_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -63,7 +64,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         TvShow tvShow = snapshot.data![index];
-                        return TvShowCard(tvShow: tvShow);
+                        return TvShowCard(
+                          tvShow: tvShow,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const DetailScreen(),
+                                ));
+                          },
+                        );
                       },
                     );
                   }),
