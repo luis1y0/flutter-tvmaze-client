@@ -11,16 +11,16 @@ class TvmazeRepository extends ApiRepository {
 
   TvmazeRepository(this.client);
   @override
-  Future<List<TvShow>> fetchTvShows(String query) async {
+  Future<List<TvShowResult>> fetchTvShows(String query) async {
     try {
       var q = Uri.encodeQueryComponent(query);
       String url = 'https://api.tvmaze.com/search/shows?q=$q';
       var uri = Uri.parse(url);
       var response = await client.get(uri);
       List responseList = jsonDecode(response.body) as List;
-      List<_TvShow> tvShows = [];
+      List<_TvShowResult> tvShows = [];
       for (Map<String, dynamic> item in responseList) {
-        tvShows.add(_TvShow(
+        tvShows.add(_TvShowResult(
           id: item['show']['id'],
           name: item['show']['name'],
           imageUrl: item['show']['image']['medium'],
@@ -46,12 +46,7 @@ class TvmazeRepository extends ApiRepository {
       var uri = Uri.parse(url);
       var response = await client.get(uri);
       Map<String, dynamic> responseData = jsonDecode(response.body);
-      return _TvShow(
-        id: responseData['id'],
-        name: responseData['name'],
-        imageUrl: responseData['image']['medium'],
-        rating: responseData['rating']['average'],
-      );
+      return _TvShow.fromJson(responseData);
     } on TimeoutException {
       rethrow;
     } on SocketException {
@@ -59,6 +54,7 @@ class TvmazeRepository extends ApiRepository {
     } on IOException {
       rethrow;
     } catch (e) {
+      print(e);
       rethrow;
     }
   }

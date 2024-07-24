@@ -27,7 +27,13 @@ class _DetailScreenState extends State<DetailScreen> {
               child: CircularProgressIndicator(),
             );
           }
-          return TvShowCard(tvShow: snapshot.data!);
+          var tvShow = snapshot.data!;
+          return Column(
+            children: [
+              TvShowCard(tvShow: tvShow),
+              Text(tvShow.network),
+            ],
+          );
         },
       ),
     );

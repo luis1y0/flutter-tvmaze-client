@@ -4,7 +4,7 @@ import 'package:ballastlane_app/domain/entities/tv_show.dart';
 import 'package:flutter/material.dart';
 
 class TvShowCard extends StatelessWidget {
-  final TvShow tvShow;
+  final TvShowResult tvShow;
   final VoidCallback? onTap;
   const TvShowCard({super.key, required this.tvShow, this.onTap});
 

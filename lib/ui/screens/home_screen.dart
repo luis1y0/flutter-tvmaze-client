@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             Expanded(
-              child: FutureBuilder<List<TvShow>>(
+              child: FutureBuilder<List<TvShowResult>>(
                   future: Provider.of<ApiRepository>(context)
                       .fetchTvShows('Pokemon'),
                   builder: (context, snapshot) {
@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     return ListView.builder(
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
-                        TvShow tvShow = snapshot.data![index];
+                        TvShowResult tvShow = snapshot.data![index];
                         return TvShowCard(
                           tvShow: tvShow,
                           onTap: () {
