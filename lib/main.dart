@@ -1,3 +1,4 @@
+import 'package:ballastlane_app/domain/repositories/api_repository.dart';
 import 'package:ballastlane_app/implementation/repositories/tvmaze_repository.dart';
 import 'package:ballastlane_app/ui/screens/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class Application extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider(create: (_) => TvmazeRepository(http.Client())),
+        Provider<ApiRepository>(create: (_) => TvmazeRepository(http.Client())),
       ],
       child: MaterialApp(
         title: 'Ballastlane App',

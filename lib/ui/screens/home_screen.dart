@@ -1,5 +1,5 @@
 import 'package:ballastlane_app/domain/entities/tv_show.dart';
-import 'package:ballastlane_app/implementation/repositories/tvmaze_repository.dart';
+import 'package:ballastlane_app/domain/repositories/api_repository.dart';
 import 'package:ballastlane_app/ui/screens/detail_screen.dart';
 import 'package:ballastlane_app/ui/widgets/tvshow_card.dart';
 import 'package:flutter/material.dart';
@@ -52,8 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Expanded(
               child: FutureBuilder<List<TvShow>>(
-                  future:
-                      Provider.of<TvmazeRepository>(context).fetchPokemonList(),
+                  future: Provider.of<ApiRepository>(context)
+                      .fetchTvShows('Pokemon'),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return const Center(
@@ -68,10 +68,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           tvShow: tvShow,
                           onTap: () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const DetailScreen(),
-                                ));
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => DetailScreen(
+                                  showId: tvShow.id,
+                                ),
+                              ),
+                            );
                           },
                         );
                       },

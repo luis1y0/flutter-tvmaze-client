@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:ballastlane_app/domain/entities/tv_show.dart';
 import 'package:ballastlane_app/domain/repositories/api_repository.dart';
 import 'package:http/http.dart' as http;
@@ -9,9 +11,10 @@ class TvmazeRepository extends ApiRepository {
 
   TvmazeRepository(this.client);
   @override
-  Future<List<TvShow>> fetchPokemonList() async {
+  Future<List<TvShow>> fetchTvShows(String query) async {
     try {
-      String url = 'https://api.tvmaze.com/search/shows?q=pokemon';
+      var q = Uri.encodeQueryComponent(query);
+      String url = 'https://api.tvmaze.com/search/shows?q=$q';
       var uri = Uri.parse(url);
       var response = await client.get(uri);
       List responseList = jsonDecode(response.body) as List;
@@ -25,8 +28,38 @@ class TvmazeRepository extends ApiRepository {
         ));
       }
       return tvShows;
+    } on TimeoutException {
+      return [];
+    } on SocketException {
+      return [];
+    } on IOException {
+      return [];
     } catch (e) {
       return [];
+    }
+  }
+
+  @override
+  Future<TvShow> fetchTvShowById(int id) async {
+    try {
+      String url = 'https://api.tvmaze.com/shows/$id';
+      var uri = Uri.parse(url);
+      var response = await client.get(uri);
+      Map<String, dynamic> responseData = jsonDecode(response.body);
+      return _TvShow(
+        id: responseData['id'],
+        name: responseData['name'],
+        imageUrl: responseData['image']['medium'],
+        rating: responseData['rating']['average'],
+      );
+    } on TimeoutException {
+      rethrow;
+    } on SocketException {
+      rethrow;
+    } on IOException {
+      rethrow;
+    } catch (e) {
+      rethrow;
     }
   }
 }
