@@ -1,4 +1,5 @@
 import 'package:ballastlane_app/domain/repositories/api_repository.dart';
+import 'package:ballastlane_app/ui/widgets/description_widget.dart';
 import 'package:ballastlane_app/ui/widgets/tvshow_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -28,10 +29,10 @@ class _DetailScreenState extends State<DetailScreen> {
             );
           }
           var tvShow = snapshot.data!;
-          return Column(
+          return ListView(
             children: [
               TvShowCard(tvShow: tvShow),
-              Text(tvShow.network),
+              DescriptionWidget(show: tvShow),
             ],
           );
         },

@@ -1,16 +1,16 @@
 # ballastlane_app
 
-A new Flutter project.
+A shows search app.
 
-## Getting Started
+## Dependencies setup
 
-This project is a starting point for a Flutter application.
+```
+flutter pub add flutter_bloc http provider shared_preferences simple_html_css
+flutter pub add dev:test dev:mockito dev:build_runner
+```
 
-A few resources to get you started if this is your first Flutter project:
+## Generating Test Mocks
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```
+dart run build_runner build
+```

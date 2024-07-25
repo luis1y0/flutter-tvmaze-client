@@ -26,6 +26,15 @@ class _TvShow extends TvShow {
   });
 
   factory _TvShow.fromJson(Map<String, dynamic> data) {
+    String premiered = data['premiered'];
+    RegExp pattern = RegExp(r'(\d{4})-(\d{2})-(\d{2})');
+    List<Match> matches = pattern.allMatches(premiered).toList();
+    Match match = matches[0];
+    DateTime premieredDatetime = DateTime(
+      int.parse(match[1]!),
+      int.parse(match[2]!),
+      int.parse(match[3]!),
+    );
     return _TvShow(
       id: data['id'],
       name: data['name'],
@@ -36,9 +45,9 @@ class _TvShow extends TvShow {
       url: data['url'],
       genres: List.from(data['genres']),
       status: data['status'],
-      premiered: DateTime.now(),
+      premiered: premieredDatetime,
       summary: data['summary'],
-      network: data['network']['name'],
+      network: data['network']?['name'] ?? '--',
     );
   }
 }

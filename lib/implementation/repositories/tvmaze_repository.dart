@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:ballastlane_app/domain/entities/exceptions.dart';
 import 'package:ballastlane_app/domain/entities/tv_show.dart';
 import 'package:ballastlane_app/domain/repositories/api_repository.dart';
 import 'package:http/http.dart' as http;
@@ -45,6 +46,9 @@ class TvmazeRepository extends ApiRepository {
       String url = 'https://api.tvmaze.com/shows/$id';
       var uri = Uri.parse(url);
       var response = await client.get(uri);
+      if (response.statusCode != 200) {
+        throw ShowNotFoundException();
+      }
       Map<String, dynamic> responseData = jsonDecode(response.body);
       return _TvShow.fromJson(responseData);
     } on TimeoutException {
@@ -54,7 +58,6 @@ class TvmazeRepository extends ApiRepository {
     } on IOException {
       rethrow;
     } catch (e) {
-      print(e);
       rethrow;
     }
   }

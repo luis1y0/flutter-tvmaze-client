@@ -1,8 +1,11 @@
 import 'package:ballastlane_app/domain/entities/tv_show.dart';
 import 'package:ballastlane_app/domain/repositories/api_repository.dart';
+import 'package:ballastlane_app/ui/blocs/auth_bloc.dart';
+import 'package:ballastlane_app/ui/blocs/search_bloc.dart';
 import 'package:ballastlane_app/ui/screens/detail_screen.dart';
 import 'package:ballastlane_app/ui/widgets/tvshow_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,31 +16,44 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final SearchController _searchController = SearchController();
+  final TextEditingController _searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    var searchBloc =
+        SearchBloc(Provider.of<ApiRepository>(context, listen: false));
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Screen'),
+        actions: [
+          PopupMenuButton(
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem(
+                  child: const Text('Sign Out'),
+                  onTap: () {
+                    var authBloc =
+                        Provider.of<AuthBloc>(context, listen: false);
+                    authBloc.add(Signout());
+                  },
+                ),
+              ];
+            },
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(32.0),
         child: Column(
           children: [
             SearchAnchor(
-              searchController: _searchController,
               isFullScreen: false,
               viewConstraints: const BoxConstraints(),
               builder: (context, controller) {
                 return SearchBar(
-                  controller: TextEditingController(text: controller.text),
-                  trailing: const [
-                    Icon(Icons.search),
-                  ],
+                  controller: _searchController,
                   hintText: 'Type to search...',
-                  onChanged: (value) {
-                    controller.value = TextEditingValue(text: value);
-                    if (value.isNotEmpty) controller.openView();
+                  onSubmitted: (value) {
+                    searchBloc.add(SearchQuery(query: value));
                   },
                 );
               },
@@ -51,19 +67,22 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             Expanded(
-              child: FutureBuilder<List<TvShowResult>>(
-                  future: Provider.of<ApiRepository>(context)
-                      .fetchTvShows('Pokemon'),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
+              child: BlocConsumer<SearchBloc, SearchState>(
+                bloc: searchBloc,
+                listenWhen: (previous, current) => current is ErrorOfSearch,
+                listener: (context, state) {
+                  if (state is ErrorOfSearch) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(state.message),
+                    ));
+                  }
+                },
+                builder: (context, state) {
+                  if (state is ListedResults) {
                     return ListView.builder(
-                      itemCount: snapshot.data!.length,
+                      itemCount: state.results.length,
                       itemBuilder: (context, index) {
-                        TvShowResult tvShow = snapshot.data![index];
+                        TvShowResult tvShow = state.results[index];
                         return TvShowCard(
                           tvShow: tvShow,
                           onTap: () {
@@ -79,7 +98,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                     );
-                  }),
+                  }
+                  return const Center(
+                    child: Text('There\'s no results to show.'),
+                  );
+                },
+              ),
             ),
           ],
         ),
